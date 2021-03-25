@@ -54,7 +54,7 @@ namespace WebAPI.Controllers.V1
         }
 
         [SwaggerOperation(Summary ="Retrieves all posts")]
-        [Authorize(Roles = UserRoles.SuperUserOrAdmin)]        
+        [Authorize(Roles = UserRoles.Admin)]        
         [EnableQuery]
         [HttpGet("[action]")]
         public IQueryable<PostDto> GetAll()
@@ -87,7 +87,7 @@ namespace WebAPI.Controllers.V1
         }
 
         [SwaggerOperation(Summary = "Create new post")]
-        [Authorize(Roles = UserRoles.SuperUserOrUser)]
+        [Authorize(Roles = UserRoles.User)]
         [HttpPost]
         public async Task<IActionResult> Create(CreatePostDto newPost)
         {
@@ -102,25 +102,24 @@ namespace WebAPI.Controllers.V1
             var userOwnsPost = await _postService.UserOwnsPostAsync(updatePost.Id, User.FindFirstValue(ClaimTypes.NameIdentifier));
             if(!userOwnsPost)
             {
-                return BadRequest(new Response<bool>() { Succeeded = false, Message = "You do not own this post" });
+                return BadRequest(new Response(false, "You do not own this post"));
             }
             await _postService.UpdatePostAsync(updatePost);
             return NoContent();
         }
 
         [SwaggerOperation(Summary = "Delete post")]
-        [Authorize(Roles = UserRoles.SuperUserOrAdminOrUser)]
+        [Authorize(Roles = UserRoles.AdminOrUser)]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             var userOwnsPost = await _postService.UserOwnsPostAsync(id, User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var isAdmin = User.IsInRole(UserRoles.Admin);
-            var isSuperUser = User.IsInRole(UserRoles.SuperUser);
 
-            if (!isSuperUser && !isAdmin && !userOwnsPost)
+            if (!isAdmin && !userOwnsPost)
             {
-                return BadRequest(new Response<bool>() { Succeeded = false, Message = "You do not own this post" });
+                return BadRequest(new Response(false, "You do not own this post"));
             }
 
             await _postService.DeletePostAsync(id);

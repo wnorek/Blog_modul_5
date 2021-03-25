@@ -196,12 +196,19 @@ namespace WebAPI.Controllers.V1
                 });
             }
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.SuperUser))
+            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
             {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.SuperUser));
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
             }
 
-            await _userManager.AddToRoleAsync(user, UserRoles.SuperUser);
+
+            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+            }
+
+            await _userManager.AddToRoleAsync(user, UserRoles.User);
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
 
             return Ok(new Response<bool> { Succeeded = true, Message = "User created successfully!" });
         }
