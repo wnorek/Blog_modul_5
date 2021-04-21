@@ -17,8 +17,10 @@ namespace Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IPostService, PostService>();
-            services.AddScoped<IAuthorService, AuthorService>();
-            
+            //services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<IPictureService, PictureService>();
+            services.AddScoped<IAttachemntService, AttachmnetService>();
+
             return services;
         }
     }

@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using WebAPI.Model;
+using WebAPI.SwaggersExamples.Responses;
 using WebAPI.Wrappers;
 
 namespace WebAPI.Controllers.V1
@@ -30,6 +31,13 @@ namespace WebAPI.Controllers.V1
             _roleManager = roleManager;
         }
 
+        /// <summary>
+        /// Register the user in the system
+        /// </summary>
+        /// <response code="200">User created successfully!</response>
+        /// <response code="500">User already exist!</response>
+        [ProducesResponseType(typeof(RegisterResponseStatus200), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RegisterResponseStatus500), StatusCodes.Status500InternalServerError)]
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register(RegisterModel register)
@@ -38,7 +46,7 @@ namespace WebAPI.Controllers.V1
 
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response
                 {
                     Succeeded = false,
                     Message = "User already exist!"
@@ -71,9 +79,13 @@ namespace WebAPI.Controllers.V1
 
             await _userManager.AddToRoleAsync(user, UserRoles.User);
 
-            return Ok(new Response<bool> { Succeeded = true, Message = "User created successfully!" });
+            return Ok(new Response { Succeeded = true, Message = "User created successfully!" });
         }
 
+
+        /// <summary>
+        /// Logs the user into system
+        /// </summary>
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login(LoginModel login)
@@ -105,10 +117,10 @@ namespace WebAPI.Controllers.V1
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
 
-                return Ok(new
+                return Ok(new AuthSuccessResponse
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    Expiration = token.ValidTo
                 });
             }
 
@@ -118,6 +130,10 @@ namespace WebAPI.Controllers.V1
 
         }
 
+
+        /// <summary>
+        /// Register the admin in the system
+        /// </summary>
         [HttpPost]
         [Route("RegisterAdmmin")]
         public async Task<IActionResult> RegisterAdmin(RegisterModel register)
@@ -126,7 +142,7 @@ namespace WebAPI.Controllers.V1
 
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response
                 {
                     Succeeded = false,
                     Message = "User already exist!"
@@ -159,7 +175,7 @@ namespace WebAPI.Controllers.V1
 
             await _userManager.AddToRoleAsync(user, UserRoles.Admin);
 
-            return Ok(new Response<bool> { Succeeded = true, Message = "User created successfully!" });
+            return Ok(new Response { Succeeded = true, Message = "User created successfully!" });
         }
 
         [HttpPost]
@@ -170,7 +186,7 @@ namespace WebAPI.Controllers.V1
 
             if (userExist != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response<bool>
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response
                 {
                     Succeeded = false,
                     Message = "User already exist!"
@@ -210,7 +226,7 @@ namespace WebAPI.Controllers.V1
             await _userManager.AddToRoleAsync(user, UserRoles.User);
             await _userManager.AddToRoleAsync(user, UserRoles.Admin);
 
-            return Ok(new Response<bool> { Succeeded = true, Message = "User created successfully!" });
+            return Ok(new Response { Succeeded = true, Message = "User created successfully!" });
         }
 
     }

@@ -17,6 +17,7 @@ namespace Domain.Entities
 
         [Required]
         [MaxLength(100)]
+        [MinLength(5)]
         public string Title { get; set; }
         [Required]
         [MaxLength(2000)]
@@ -26,6 +27,8 @@ namespace Domain.Entities
         [MaxLength(450)]
         public string UserId { get; set; }
 
+        public ICollection<Picture> Pictures { get; set; }
+        public ICollection<Attachment> Attachments { get; set; }
         public Post()
         {
 

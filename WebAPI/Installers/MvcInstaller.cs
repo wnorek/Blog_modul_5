@@ -2,7 +2,9 @@
 using Application.Interfaces;
 using Application.Mapping;
 using Application.Services;
+using Application.Validators;
 using Domain.Interfaces;
+using FluentValidation.AspNetCore;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNet.OData.Extensions;
@@ -26,10 +28,15 @@ namespace WebAPI.Installers
             services.AddApplication();
             services.AddInfrastructure();
             services.AddControllers()
+                .AddFluentValidation(options =>
+                {
+                    options.RegisterValidatorsFromAssemblyContaining<CreatePostDtoValidator>();
+                })
                 .AddJsonOptions(options => 
                 {
                     options.JsonSerializerOptions.WriteIndented = true;
-                });
+                })
+                .AddXmlDataContractSerializerFormatters();
 
             services.AddApiVersioning(x=>
                 {

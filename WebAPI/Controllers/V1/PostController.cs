@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.Interfaces;
+using Application.Validators;
 using Infrastructure.Identity;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebAPI.Attributes;
 using WebAPI.Filters;
 using WebAPI.Helpers;
 using WebAPI.Wrappers;
@@ -86,11 +88,12 @@ namespace WebAPI.Controllers.V1
             return Ok(posts);
         }
 
+        [ValidateFilter]
         [SwaggerOperation(Summary = "Create new post")]
         [Authorize(Roles = UserRoles.User)]
         [HttpPost]
         public async Task<IActionResult> Create(CreatePostDto newPost)
-        {
+        {          
             var post = await _postService.AddNewPostAsync(newPost, User.FindFirstValue(ClaimTypes.NameIdentifier));
             return Created($"api/posts/{post.Id}", new Response<PostDto>(post));
         }

@@ -4,60 +4,22 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BloggerContext))]
-    partial class BloggerContextModelSnapshot : ModelSnapshot
+    [Migration("20210329154154_AddPostPictures")]
+    partial class AddPostPictures
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.3")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("AttachmentPost", b =>
-                {
-                    b.Property<int>("AttachmentsID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PostsID")
-                        .HasColumnType("int");
-
-                    b.HasKey("AttachmentsID", "PostsID");
-
-                    b.HasIndex("PostsID");
-
-                    b.ToTable("AttachmentPost");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Attachment", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Main")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Attachments");
-                });
 
             modelBuilder.Entity("Domain.Entities.Picture", b =>
                 {
@@ -331,21 +293,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("PostsID");
 
                     b.ToTable("PicturePost");
-                });
-
-            modelBuilder.Entity("AttachmentPost", b =>
-                {
-                    b.HasOne("Domain.Entities.Attachment", null)
-                        .WithMany()
-                        .HasForeignKey("AttachmentsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Post", null)
-                        .WithMany()
-                        .HasForeignKey("PostsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
