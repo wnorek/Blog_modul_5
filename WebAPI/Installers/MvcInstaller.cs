@@ -50,6 +50,7 @@ namespace WebAPI.Installers
 
             services.AddTransient<UserResolverService>();
             services.AddScoped<ErrorHandlingMiddleware>();
+            services.AddScoped<RequestTimeMiddleware>();
 
             services.AddOData();
             

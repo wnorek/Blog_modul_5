@@ -3,11 +3,14 @@ using Application.Interfaces;
 using Application.Mapping;
 using Application.Services;
 using Domain.Interfaces;
+using HealthChecks.UI.Client;
 using Infrastructure.Repositories;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,10 +19,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OData.Edm;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI.HealthChecks;
 using WebAPI.Installers;
 using WebAPI.Middlewares;
 
@@ -51,6 +56,8 @@ namespace WebAPI
             }
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
+            app.UseMiddleware<RequestTimeMiddleware>();
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -63,6 +70,13 @@ namespace WebAPI
                 endpoints.Filter().OrderBy().MaxTop(10);
                 endpoints.MapODataRoute("odata", "odata", GetEmdModel());
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+
+                endpoints.MapHealthChecksUI();
             });
         }
 

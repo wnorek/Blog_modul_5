@@ -1,0 +1,2 @@
+Microsoft.AspNetCore.Http.DefaultHttpResponse : GET : /health
+Microsoft.AspNetCore.Http.DefaultHttpResponse : GET : /health
